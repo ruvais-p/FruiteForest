@@ -1,56 +1,50 @@
+
 import 'package:flutter/material.dart';
+import 'package:fruiteforest/feature/homepage/model/activity_category_model.dart';
 
-class SimpleTimerWidget extends StatelessWidget {
+class CountdownWidget extends StatelessWidget {
   final int seconds;
-  final bool isRunning;
-  final VoidCallback onStart;
-  final VoidCallback onPause;
-  final VoidCallback onStop;
+  final VoidCallback onGiveUp;
+  final ActivityCategory category;
 
-  const SimpleTimerWidget({
+  const CountdownWidget({
     super.key,
     required this.seconds,
-    required this.isRunning,
-    required this.onStart,
-    required this.onPause,
-    required this.onStop,
+    required this.onGiveUp,
+    required this.category,
   });
 
-  String _formatTime(int seconds) {
-    final mins = seconds ~/ 60;
-    final secs = seconds % 60;
-    return '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  String _format(int seconds) {
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    return '${m.toString().padLeft(2, '0')} : ${s.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _formatTime(seconds),
-          style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          category.label,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _format(seconds),
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 20),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(onPressed: onStart, child: const Text("Start")),
-            const SizedBox(width: 10),
-
-            ElevatedButton(
-              onPressed: isRunning ? onPause : null,
-              child: const Text("Pause"),
-            ),
-            const SizedBox(width: 10),
-
-            ElevatedButton(
-              onPressed: onStop,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text("Stop"),
-            ),
-          ],
+        ElevatedButton(
+          onPressed: onGiveUp,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          child: const Text("Give Up"),
         ),
       ],
     );

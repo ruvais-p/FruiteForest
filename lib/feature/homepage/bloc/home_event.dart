@@ -1,22 +1,21 @@
 part of 'home_bloc.dart';
 
 @immutable
-sealed class HomeEvent {
-  const HomeEvent();
-}
+sealed class HomeEvent {}
 
-class TimerStart extends HomeEvent {
-  const TimerStart();
-}
+class HomeStarted extends HomeEvent {}
 
-class TimerPause extends HomeEvent {
-  const TimerPause();
-}
+class TimerStart extends HomeEvent {}
 
-class TimerStop extends HomeEvent {
-  const TimerStop();
-}
+class TimerTick extends HomeEvent {}
 
-class TimerTick extends HomeEvent {
-  const TimerTick();
+class TimerGiveUp extends HomeEvent {}
+
+class PointsUpdated extends HomeEvent {
+  final int points;
+  PointsUpdated(this.points);
+}
+class CategorySelected extends HomeEvent {
+  final ActivityCategory category;
+  CategorySelected(this.category);
 }

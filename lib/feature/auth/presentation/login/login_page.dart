@@ -17,9 +17,8 @@ class LoginPage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => OtpVerificationPage(
-                  phone: phoneController.text,
-                ),
+                builder: (_) =>
+                    OtpVerificationPage(phone: phoneController.text),
               ),
             );
           }
@@ -32,16 +31,14 @@ class LoginPage extends StatelessWidget {
               TextField(
                 controller: phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  hintText: "+91XXXXXXXXXX",
-                ),
+                decoration: const InputDecoration(hintText: "+91XXXXXXXXXX"),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   context.read<AuthBloc>().add(
-                        SendOtpEvent(phoneController.text),
-                      );
+                    SendOtpEvent(phoneController.text),
+                  );
                 },
                 child: const Text("Get OTP"),
               ),

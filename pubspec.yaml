@@ -38,6 +38,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   do_not_disturb: ^1.0.3
   flutter_kiosk_mode: ^0.0.2
+  fl_chart: ^1.1.1
+  flutter_heatmap_calendar: ^1.0.5
 
 dev_dependencies:
   flutter_test:

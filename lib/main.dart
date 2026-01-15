@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruiteforest/feature/analysis_page/bloc/analysis_bloc.dart';
 import 'package:fruiteforest/feature/auth/presentation/splashscreen/splash_screen.dart';
 import 'package:fruiteforest/feature/auth/bloc/auth_bloc.dart';
 import 'package:fruiteforest/feature/auth/repository/auth_repository.dart';
 import 'package:fruiteforest/feature/homepage/bloc/home_bloc.dart';
+import 'package:fruiteforest/feature/homepage/repository/home_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -30,7 +32,13 @@ class MyApp extends StatelessWidget {
           create: (_) =>
               AuthBloc(AuthRepository(supabase))..add(CheckAuthStatusEvent()),
         ),
-        BlocProvider(create: (_) => HomeBloc()),
+        BlocProvider(
+          create: (context) => HomeBloc(HomeRepository())..add(HomeStarted()),
+        ),
+        BlocProvider<AnalysisBloc>(
+          create: (context) =>
+              AnalysisBloc(Supabase.instance.client)..add(LoadAnalysis()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
