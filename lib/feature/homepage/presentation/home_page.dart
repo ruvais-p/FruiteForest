@@ -4,6 +4,7 @@ import 'package:fruiteforest/feature/analysis_page/presentation/analysis_page.da
 import 'package:fruiteforest/feature/homepage/bloc/home_bloc.dart';
 import 'package:fruiteforest/feature/homepage/model/activity_category_model.dart';
 import 'package:fruiteforest/feature/homepage/presentation/widget/timer_widget.dart';
+import 'package:fruiteforest/feature/store/presentation/store_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -78,7 +79,14 @@ class _HomePageState extends State<HomePage> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.shopping_cart),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const StorePage(),
+                            ),
+                          );
+                        },
                       ),
                       BlocBuilder<HomeBloc, HomeState>(
                         buildWhen: (p, c) => p.points != c.points,

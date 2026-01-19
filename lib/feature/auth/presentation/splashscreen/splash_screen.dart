@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fruiteforest/feature/auth/presentation/createuser/create_user_page.dart';
 import 'package:fruiteforest/feature/auth/presentation/login/login_page.dart';
+import 'package:fruiteforest/feature/auth/presentation/welcome_page/welcome_page.dart';
 import 'package:fruiteforest/feature/auth/repository/auth_repository.dart';
 import 'package:fruiteforest/feature/homepage/presentation/home_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -51,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginPage()),
+          MaterialPageRoute(builder: (_) => WelcomePage()),
         );
         break;
 
