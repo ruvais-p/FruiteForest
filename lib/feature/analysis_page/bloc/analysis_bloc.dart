@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:fruiteforest/feature/analysis_page/mock_data_provider.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,6 +19,25 @@ class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
   ) async {
     emit(state.copyWith(loading: true));
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // 🔧 MOCK DATA MODE - Remove this block when using real data
+    // ═══════════════════════════════════════════════════════════════════════
+    if (useMockData) {
+      // Simulate network delay for realistic testing
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      emit(
+        state.copyWith(
+          loading: false,
+          categoryMinutes: getMockCategoryMinutes(),
+          dailyMinutes: getMockDailyMinutes(),
+        ),
+      );
+      return;
+    }
+    // ═══════════════════════════════════════════════════════════════════════
+
+    // Real Supabase data fetching
     final uid = client.auth.currentUser!.id;
 
     // Pie data

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruiteforest/common/theme/app_theme/app_theme.dart';
 import 'package:fruiteforest/feature/analysis_page/bloc/analysis_bloc.dart';
+import 'package:fruiteforest/feature/analysis_page/presentation/analysis_page.dart';
 import 'package:fruiteforest/feature/auth/presentation/createuser/create_user_page.dart';
 import 'package:fruiteforest/feature/auth/presentation/login/login_page.dart';
 import 'package:fruiteforest/feature/auth/presentation/otp_verification/otp_verification_page.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightMode,
         home: CreateProfilePage(),
+        //home: const AnalysisPage(),
       ),
     );
   }
