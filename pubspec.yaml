@@ -83,7 +83,11 @@ flutter:
   fonts:
     - family: Outfit
       fonts:
-        - asset: assets/font/outfit_font/Outfit-VariableFont_wght.ttf
+        - asset: assets/font/outfit_font/OutfitMedium.ttf
+          style: normal
+    - family: Inter
+      fonts:
+        - asset: assets/font/inter_font/Inter-VariableFont_opsz,wght.ttf
           style: normal
   #   - family: Trajan Pro
   #     fonts:

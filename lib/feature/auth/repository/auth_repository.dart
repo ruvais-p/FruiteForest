@@ -5,7 +5,9 @@ class AuthRepository {
   AuthRepository(this._client);
 
   Future<void> sendOtp(String phone) async {
-    await _client.auth.signInWithOtp(phone: phone);
+    // Format phone number with country code for India
+    final formattedPhone = '+91$phone';
+    await _client.auth.signInWithOtp(phone: formattedPhone);
   }
 
   Future<void> verifyOtp({required String phone, required String otp}) async {
