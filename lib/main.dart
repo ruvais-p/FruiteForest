@@ -14,6 +14,7 @@ import 'package:fruiteforest/feature/homepage/bloc/home_bloc.dart';
 import 'package:fruiteforest/feature/homepage/repository/home_repository.dart';
 import 'package:fruiteforest/feature/store/bloc/store_bloc.dart';
 import 'package:fruiteforest/feature/store/repository/store_repository.dart';
+import 'package:fruiteforest/feature/store/presentation/store_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -54,8 +55,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightMode,
-        home: CreateProfilePage(),
+        //home: CreateProfilePage(),
         //home: const AnalysisPage(),
+        home: const StorePage(), // Testing Store UI
       ),
     );
   }
