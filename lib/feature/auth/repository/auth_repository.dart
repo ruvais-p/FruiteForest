@@ -4,14 +4,20 @@ class AuthRepository {
   final SupabaseClient _client;
   AuthRepository(this._client);
 
+  String _formatPhone(String phone) {
+    return '+91${phone.trim()}';
+  }
+
   Future<void> sendOtp(String phone) async {
-    // Format phone number with country code for India
-    final formattedPhone = '+91$phone';
-    await _client.auth.signInWithOtp(phone: formattedPhone);
+    await _client.auth.signInWithOtp(phone: _formatPhone(phone));
   }
 
   Future<void> verifyOtp({required String phone, required String otp}) async {
-    await _client.auth.verifyOTP(phone: phone, token: otp, type: OtpType.sms);
+    await _client.auth.verifyOTP(
+      phone: _formatPhone(phone),
+      token: otp,
+      type: OtpType.sms,
+    );
   }
 
   Future<int> resolveUserFlow() async {

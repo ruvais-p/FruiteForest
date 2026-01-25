@@ -23,6 +23,12 @@ class AppTextTheme {
       fontWeight: FontWeight.w500,
       color: AppColors.gray,
     ),
+    displayLarge: TextStyle(
+      fontFamily: _fontFamily,
+      fontSize: 30,
+      fontWeight: FontWeight.w500,
+      color: AppColors.black,
+    ),
   );
 
   static TextTheme darkTextTheme = TextTheme(

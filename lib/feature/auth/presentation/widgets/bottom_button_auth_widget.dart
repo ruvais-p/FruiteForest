@@ -17,7 +17,7 @@ class BottomButtonAuthWidget extends StatelessWidget {
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
-        margin: const EdgeInsets.only(left: 54, right: 54, bottom: 40),
+        margin: const EdgeInsets.only(left: 54, right: 54, bottom: 20),
         height: 64,
         alignment: Alignment.center,
         width: double.infinity,
