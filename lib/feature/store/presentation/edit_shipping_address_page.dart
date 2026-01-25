@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruiteforest/common/theme/colors/colors.dart';
 import '../bloc/store_bloc.dart';
 import '../model/shipping_address_model.dart';
 
+/// Edit Shipping Address Page
+///
+/// Form for viewing and editing the user's shipping address.
+/// Uses AppTextTheme for consistent typography.
 class EditShippingAddressPage extends StatefulWidget {
   const EditShippingAddressPage({super.key});
 
@@ -14,36 +19,35 @@ class EditShippingAddressPage extends StatefulWidget {
 class _EditShippingAddressPageState extends State<EditShippingAddressPage> {
   final _formKey = GlobalKey<FormState>();
   final _addressController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _districtController = TextEditingController();
   final _postOfficeController = TextEditingController();
+  final _districtController = TextEditingController();
+  final _stateController = TextEditingController();
   final _postPinController = TextEditingController();
   bool _isSubmitting = false;
   bool _isLoading = true;
-  ShippingAddress? _currentAddress;
+  bool _hasAddress = false;
 
   @override
   void initState() {
     super.initState();
-    // Load the current shipping address
     context.read<StoreBloc>().add(LoadShippingAddress());
   }
 
   @override
   void dispose() {
     _addressController.dispose();
-    _stateController.dispose();
-    _districtController.dispose();
     _postOfficeController.dispose();
+    _districtController.dispose();
+    _stateController.dispose();
     _postPinController.dispose();
     super.dispose();
   }
 
   void _populateFields(ShippingAddress address) {
     _addressController.text = address.address;
-    _stateController.text = address.state;
-    _districtController.text = address.district;
     _postOfficeController.text = address.postOffice;
+    _districtController.text = address.district;
+    _stateController.text = address.state;
     _postPinController.text = address.postPin;
   }
 
@@ -65,195 +69,219 @@ class _EditShippingAddressPageState extends State<EditShippingAddressPage> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return BlocListener<StoreBloc, StoreState>(
       listener: (context, state) {
         if (state is ShippingAddressLoaded) {
           setState(() {
             _isLoading = false;
-            _currentAddress = state.address;
+            _hasAddress = state.address != null;
           });
           if (state.address != null) {
             _populateFields(state.address!);
           }
         } else if (state is ShippingAddressUpdated) {
-          // Navigate back to store page after successful update
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Address updated successfully! ✓'),
+            SnackBar(
+              content: Text(
+                'Address updated successfully! ✓',
+                style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+              ),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
             ),
           );
         } else if (state is StorePurchaseFailed) {
           setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(
+                state.message,
+                style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(
-          title: const Text('Edit Shipping Address'),
-          centerTitle: true,
+          backgroundColor: AppColors.backgroundColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text('Edit Shipping Address', style: textTheme.titleLarge),
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _currentAddress == null
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.location_off,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'No shipping address found',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Go Back'),
-                    ),
-                  ],
-                ),
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.yellow),
               )
             : SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        'Update your shipping address',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      TextFormField(
+                      // Address field
+                      _buildTextField(
                         controller: _addressController,
-                        decoration: const InputDecoration(
-                          labelText: 'Address',
-                          hintText: 'Enter your complete address',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.location_on),
-                        ),
+                        label: 'Address',
+                        hint: 'Building name, Street, Area',
                         maxLines: 3,
+                        textTheme: textTheme,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter your address';
                           }
-                          if (value.trim().length < 10) {
-                            return 'Please enter a complete address';
-                          }
                           return null;
                         },
-                        enabled: !_isSubmitting,
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _stateController,
-                        decoration: const InputDecoration(
-                          labelText: 'State',
-                          hintText: 'Enter your state',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.map),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your state';
-                          }
-                          return null;
-                        },
-                        enabled: !_isSubmitting,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _districtController,
-                        decoration: const InputDecoration(
-                          labelText: 'District',
-                          hintText: 'Enter your district',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.location_city),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your district';
-                          }
-                          return null;
-                        },
-                        enabled: !_isSubmitting,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+
+                      // Post Office field
+                      _buildTextField(
                         controller: _postOfficeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Post Office',
-                          hintText: 'Enter your post office',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.local_post_office),
-                        ),
+                        label: 'Post Office',
+                        textTheme: textTheme,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your post office';
+                            return 'Please enter post office';
                           }
                           return null;
                         },
-                        enabled: !_isSubmitting,
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
+
+                      // District field
+                      _buildTextField(
+                        controller: _districtController,
+                        label: 'District',
+                        textTheme: textTheme,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter district';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // State field
+                      _buildTextField(
+                        controller: _stateController,
+                        label: 'State',
+                        textTheme: textTheme,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter state';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // PIN Code field
+                      _buildTextField(
                         controller: _postPinController,
-                        decoration: const InputDecoration(
-                          labelText: 'PIN Code',
-                          hintText: 'Enter 6-digit PIN code',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.pin_drop),
-                        ),
+                        label: 'PIN Code',
                         keyboardType: TextInputType.number,
                         maxLength: 6,
+                        textTheme: textTheme,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your PIN code';
+                            return 'Please enter PIN code';
                           }
                           if (!RegExp(r'^[0-9]{6}$').hasMatch(value.trim())) {
-                            return 'PIN code must be exactly 6 digits';
+                            return 'PIN code must be 6 digits';
                           }
                           return null;
                         },
-                        enabled: !_isSubmitting,
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: _isSubmitting ? null : _submitAddress,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                      const SizedBox(height: 32),
+
+                      // Done Button
+                      SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting ? null : _submitAddress,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.yellow,
+                            foregroundColor: AppColors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isSubmitting
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.black,
+                                  ),
+                                )
+                              : Text(
+                                  'DONE',
+                                  style: textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              )
-                            : const Text(
-                                'Update Address',
-                                style: TextStyle(fontSize: 16),
-                              ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required TextTheme textTheme,
+    String? hint,
+    int maxLines = 1,
+    int? maxLength,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      keyboardType: keyboardType,
+      enabled: !_isSubmitting,
+      style: textTheme.bodyLarge,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: textTheme.labelMedium,
+        hintText: hint,
+        hintStyle: textTheme.bodySmall,
+        counterText: '',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.gray.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.gray.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.yellow, width: 2),
+        ),
+        filled: true,
+        fillColor: AppColors.backgroundColor,
+      ),
+      validator: validator,
     );
   }
 }
