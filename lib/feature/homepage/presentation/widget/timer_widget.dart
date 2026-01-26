@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:fruiteforest/common/theme/colors/colors.dart';
 import 'package:fruiteforest/feature/homepage/model/activity_category_model.dart';
 
 class CountdownWidget extends StatelessWidget {
@@ -25,26 +25,22 @@ class CountdownWidget extends StatelessWidget {
     return Column(
       children: [
         Text(
-          category.label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
           _format(seconds),
-          style: const TextStyle(
+          style: TextStyle(
+            fontFamily: "Outfit",
             fontSize: 48,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
+            color: AppColors.black,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         ElevatedButton(
           onPressed: onGiveUp,
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text("Give Up"),
+          child: Text(
+            "Give Up",
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
         ),
       ],
     );

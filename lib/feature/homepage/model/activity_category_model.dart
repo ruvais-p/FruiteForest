@@ -3,6 +3,9 @@ enum ActivityCategory {
   study,
   gym,
   reading,
+  diy,
+  meditate,
+  plan,
 }
 
 extension ActivityCategoryX on ActivityCategory {
@@ -16,8 +19,15 @@ extension ActivityCategoryX on ActivityCategory {
         return 'Gym';
       case ActivityCategory.reading:
         return 'Reading';
+      case ActivityCategory.diy:
+        return 'DIY';
+      case ActivityCategory.meditate:
+        return 'Meditate';
+      case ActivityCategory.plan:
+        return 'Plan';
     }
   }
 
   String get value => name; // for DB
 }
+
