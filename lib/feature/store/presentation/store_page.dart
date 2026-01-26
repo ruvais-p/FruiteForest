@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruiteforest/common/theme/colors/colors.dart';
+import 'package:fruiteforest/feature/store/model/shipping_address_model.dart';
 import 'package:fruiteforest/feature/store/model/store_items_model.dart';
 import 'package:fruiteforest/feature/store/presentation/widgets/store_item_card_widget.dart';
 
@@ -14,7 +16,9 @@ class StorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => StoreBloc(StoreRepository())..add(LoadStore()),
+      create: (_) => StoreBloc(StoreRepository())
+        ..add(LoadStore())
+        ..add(LoadShippingAddress()),
       child: const _StoreView(),
     );
   }
@@ -26,7 +30,17 @@ class _StoreView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Store'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(
+          'Store',
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: BlocConsumer<StoreBloc, StoreState>(
         listener: (context, state) {
           if (state is StorePurchaseSuccess) {
@@ -45,11 +59,6 @@ class _StoreView extends StatelessWidget {
                 content: Text(state.message),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 3),
-                action: SnackBarAction(
-                  label: 'OK',
-                  textColor: Colors.white,
-                  onPressed: () {},
-                ),
               ),
             );
           }
@@ -62,17 +71,12 @@ class _StoreView extends StatelessWidget {
                 ),
                 backgroundColor: Colors.orange,
                 duration: const Duration(seconds: 4),
-                action: SnackBarAction(
-                  label: 'OK',
-                  textColor: Colors.white,
-                  onPressed: () {},
-                ),
               ),
             );
           }
 
           if (state is ShippingAddressNotFound) {
-            // Navigate to address page
+            // Navigate to add address page
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -99,45 +103,119 @@ class _StoreView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // Extract items from various states
-          final items = switch (state) {
-            StoreLoaded() => state.items,
-            StorePurchaseSuccess() => state.items,
-            StorePurchaseFailed() => state.items,
-            InsufficientPoints() => state.items,
-            ShippingAddressNotFound() => state.items,
-            ShippingAddressAdded() => state.items,
-            OrderPlaced() => state.items,
-            ShippingAddressLoaded() => state.items,
-            ShippingAddressUpdated() => state.items,
-            _ => <StoreItem>[],
-          };
+          // Extract items and address from various states
+          final items = _extractItems(state);
+          final address = _extractAddress(state);
 
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: items.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return StoreItemCard(item: item);
-            },
+          return Column(
+            children: [
+              // Store items list
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: items.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return StoreItemCard(item: item);
+                  },
+                ),
+              ),
+
+              // Delivering to section (only if address exists)
+              if (address != null) _buildAddressSection(context, address),
+            ],
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: context.read<StoreBloc>(),
-                child: const EditShippingAddressPage(),
+    );
+  }
+
+  List<StoreItem> _extractItems(StoreState state) {
+    return switch (state) {
+      StoreLoaded() => state.items,
+      StorePurchaseSuccess() => state.items,
+      StorePurchaseFailed() => state.items,
+      InsufficientPoints() => state.items,
+      ShippingAddressNotFound() => state.items,
+      ShippingAddressAdded() => state.items,
+      OrderPlaced() => state.items,
+      ShippingAddressLoaded() => state.items,
+      ShippingAddressUpdated() => state.items,
+      _ => <StoreItem>[],
+    };
+  }
+
+  ShippingAddress? _extractAddress(StoreState state) {
+    if (state is ShippingAddressLoaded) return state.address;
+    if (state is ShippingAddressUpdated) return state.address;
+    return null;
+  }
+
+  Widget _buildAddressSection(BuildContext context, ShippingAddress address) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Delivering to',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-            ),
-          );
-        },
-        icon: const Icon(Icons.edit_location),
-        label: const Text('Edit Address'),
+              IconButton(
+                icon: const Icon(Icons.edit, size: 20),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<StoreBloc>(),
+                        child: const EditShippingAddressPage(),
+                      ),
+                    ),
+                  );
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Address details
+          _buildAddressLine('Address', address.address),
+          _buildAddressLine('Post Office', address.postOffice),
+          _buildAddressLine('District', address.district),
+          _buildAddressLine('State', address.state),
+          _buildAddressLine('PIN Code', address.postPin),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddressLine(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        '$label: $value',
+        style: const TextStyle(fontSize: 14, color: Colors.black87),
       ),
     );
   }

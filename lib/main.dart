@@ -10,6 +10,7 @@ import 'package:fruiteforest/feature/homepage/bloc/home_bloc.dart';
 import 'package:fruiteforest/feature/homepage/repository/home_repository.dart';
 import 'package:fruiteforest/feature/store/bloc/store_bloc.dart';
 import 'package:fruiteforest/feature/store/repository/store_repository.dart';
+import 'package:fruiteforest/feature/store/presentation/store_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {

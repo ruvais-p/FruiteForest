@@ -10,13 +10,42 @@ class StoreItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return GestureDetector(
+      onTap: () {
+        context.read<StoreBloc>().add(CheckShippingAddress(item.id));
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.black, width: 1.5),
+        ),
         child: Row(
           children: [
+            // Product image
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        item.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildPlaceholderIcon();
+                        },
+                      ),
+                    )
+                  : _buildPlaceholderIcon(),
+            ),
+            const SizedBox(width: 16),
+
             // Item info
             Expanded(
               child: Column(
@@ -24,39 +53,34 @@ class StoreItemCard extends StatelessWidget {
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     '${item.points} points',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Buy button
-            ElevatedButton(
-              onPressed: () {
-                context.read<StoreBloc>().add(CheckShippingAddress(item.id));
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text('Buy'),
-            ),
+            // Arrow icon
+            const Icon(Icons.arrow_forward, color: Colors.black54, size: 24),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPlaceholderIcon() {
+    return Icon(
+      Icons.inventory_2_outlined,
+      size: 32,
+      color: Colors.grey.shade400,
     );
   }
 }
