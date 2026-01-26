@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fruiteforest/common/theme/colors/colors.dart';
 import 'package:fruiteforest/feature/analysis_page/presentation/analysis_page.dart';
+import 'package:fruiteforest/feature/homepage/bloc/home_bloc.dart';
+import 'package:fruiteforest/feature/homepage/presentation/widget/drawer_tile_widget.dart';
 import 'package:fruiteforest/feature/store/presentation/store_page.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -31,68 +36,78 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget _tile({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required Widget page,
-  }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () => _navigate(context, page),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, size: 24),
-            const SizedBox(width: 16),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ✅ Smooth professional header
-            DrawerHeader(
-              margin: EdgeInsets.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  "Menu",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: MediaQuery.of(context).padding.top + 24),
+          SizedBox(
+            height: 125,
+            width: 125,
+            child: Image.asset('assets/images/profile_image.png'),
+          ),
+
+          const SizedBox(height: 8),
+          Text(
+            "Ruvais P",
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge!.copyWith(color: AppColors.black),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/images/point_icon.svg',
+                height: 16,
+                width: 16,
               ),
-            ),
-
-            const SizedBox(height: 8),
-
-            _tile(
-              context: context,
-              icon: Icons.analytics_outlined,
-              title: "Analysis",
-              page: const AnalysisPage(),
-            ),
-
-            _tile(
-              context: context,
-              icon: Icons.store_outlined,
-              title: "Store",
-              page: const StorePage(),
-            ),
-          ],
-        ),
+              const SizedBox(width: 4),
+              BlocBuilder<HomeBloc, HomeState>(
+                buildWhen: (p, c) => p.points != c.points,
+                builder: (context, state) {
+                  return Text(
+                    "${state.points}",
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.copyWith(color: AppColors.gray),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          DrawerTile(
+            onTap: () {
+              _navigate(context, const AnalysisPage());
+            },
+            title: "Analysis",
+            icon: 'assets/images/point_icon.svg',
+          ),
+          DrawerTile(
+            onTap: () {
+              _navigate(context, const StorePage());
+            },
+            title: "Store",
+            icon: 'assets/images/point_icon.svg',
+          ),
+          DrawerTile(
+            onTap: () {
+              _navigate(context, const AnalysisPage());
+            },
+            title: "History",
+            icon: 'assets/images/point_icon.svg',
+          ),
+          DrawerTile(
+            onTap: () {
+              _navigate(context, const AnalysisPage());
+            },
+            title: "Settings",
+            icon: 'assets/images/point_icon.svg',
+          ),
+        ],
       ),
     );
   }
