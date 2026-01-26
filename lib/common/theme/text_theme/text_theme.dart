@@ -29,6 +29,12 @@ class AppTextTheme {
       fontWeight: FontWeight.w500,
       color: AppColors.black,
     ),
+    displayMedium:TextStyle(
+      fontFamily: _fontFamily,
+      fontSize: 24,
+      fontWeight: FontWeight.w500,
+      color: AppColors.black,
+    ), 
   );
 
   static TextTheme darkTextTheme = TextTheme(

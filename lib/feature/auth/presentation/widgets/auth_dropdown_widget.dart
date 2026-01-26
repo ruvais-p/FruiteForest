@@ -58,6 +58,7 @@ Widget styledDropdown({
             ).textTheme.labelLarge?.copyWith(color: AppColors.black),
             dropdownColor: AppColors.backgroundColor,
             borderRadius: BorderRadius.circular(10),
+
             items: items
                 .map((e) => DropdownMenuItem(value: e, child: Text(_cap(e))))
                 .toList(),
