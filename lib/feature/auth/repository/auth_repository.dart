@@ -58,4 +58,8 @@ class AuthRepository {
       'purpose': purpose,
     });
   }
+
+  Future<void> logout() async {
+    await _client.auth.signOut();
+  }
 }

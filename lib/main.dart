@@ -58,10 +58,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightMode,
-        //home: SplashPage(),
-        //home: StorePage(),
-        //home: AnalysisPage(),
-        home: HistoryPage(),
+        home: SplashPage(),
       ),
     );
   }

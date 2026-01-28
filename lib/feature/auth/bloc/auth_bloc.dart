@@ -13,6 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyOtpEvent>(_verifyOtp);
     on<CheckAuthStatusEvent>(_checkAuthStatus);
     on<CreateProfileEvent>(_createProfile);
+    on<LogoutEvent>(_logout);
   }
 
   Future<void> _sendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
@@ -58,6 +59,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         purpose: event.purpose,
       );
       emit(ProfileCreatedSuccess());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _logout(LogoutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      await repository.logout();
+      emit(Unauthenticated());
     } catch (e) {
       emit(AuthError(e.toString()));
     }

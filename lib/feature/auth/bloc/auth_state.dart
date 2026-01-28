@@ -20,3 +20,5 @@ final class AuthError extends AuthState {
   final String message;
   AuthError(this.message);
 }
+
+final class Unauthenticated extends AuthState {}

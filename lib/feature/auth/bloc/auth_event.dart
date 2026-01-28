@@ -31,3 +31,5 @@ final class CreateProfileEvent extends AuthEvent {
     required this.purpose,
   });
 }
+
+final class LogoutEvent extends AuthEvent {}
