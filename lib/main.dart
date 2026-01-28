@@ -12,6 +12,10 @@ import 'package:fruiteforest/feature/store/bloc/store_bloc.dart';
 import 'package:fruiteforest/feature/store/repository/store_repository.dart';
 import 'package:fruiteforest/feature/store/presentation/store_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fruiteforest/feature/analysis_page/presentation/analysis_page.dart';
+import 'package:fruiteforest/feature/history-page/bloc/history_bloc.dart';
+import 'package:fruiteforest/feature/history-page/repository/history_repository.dart';
+import 'package:fruiteforest/feature/history-page/presentation/history_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,11 +51,17 @@ class MyApp extends StatelessWidget {
         BlocProvider<StoreBloc>(
           create: (_) => StoreBloc(StoreRepository())..add(LoadStore()),
         ),
+        BlocProvider<HistoryBloc>(
+          create: (_) => HistoryBloc(HistoryRepository())..add(LoadHistory()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightMode,
-        home: SplashPage(),
+        //home: SplashPage(),
+        //home: StorePage(),
+        //home: AnalysisPage(),
+        home: HistoryPage(),
       ),
     );
   }
